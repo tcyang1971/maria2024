@@ -1,5 +1,6 @@
 package tw.edu.pu.csim.tcyang.maria2024
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,10 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import tw.edu.pu.csim.tcyang.maria2024.ui.theme.Maria2024Theme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +19,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             Maria2024Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                    Exam(m = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -31,17 +28,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun Exam(m:Modifier) {
+
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Maria2024Theme {
-        Greeting("Android")
-    }
-}
