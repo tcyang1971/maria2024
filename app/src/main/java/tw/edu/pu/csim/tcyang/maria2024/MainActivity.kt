@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,6 +71,7 @@ fun Exam(m:Modifier, game:Game) {
     var Number by remember { mutableStateOf(0) }
 
     val counter by game.state.collectAsState()
+    var score by remember { mutableStateOf(0) }
 
     Box(
         modifier = Modifier
@@ -107,7 +109,7 @@ fun Exam(m:Modifier, game:Game) {
             )
 
             Text("遊戲持續時間 " + counter.toString() + " 秒")
-            Text("您的成績 0 分")
+            Text("您的成績 " + score.toString() + " 分")
 
             Button(onClick = {
                 activity?.finish()
@@ -115,12 +117,27 @@ fun Exam(m:Modifier, game:Game) {
         }
     }
 
+    var pic = arrayOf(R.drawable.maria0, R.drawable.maria1,
+        R.drawable.maria2, R.drawable.maria3)
     Image(
-        painter = painterResource(id = R.drawable.maria2),
+        painter = painterResource(id = pic[game.icon.pictNo]),
         contentDescription = "瑪利亞位置圖示",
         modifier = Modifier
             .size(200.dp)
             .offset { (IntOffset(game.icon.x,game.icon.y))}
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        if ( Number == game.icon.pictNo){
+                            score ++
+                            game.icon.Reset()
+                        }
+                        else{
+                            score --
+                        }
+                    }
+                )
+            }
     )
 }
 
