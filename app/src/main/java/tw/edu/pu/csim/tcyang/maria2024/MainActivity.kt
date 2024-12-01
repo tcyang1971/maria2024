@@ -12,11 +12,14 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.GlobalScope
 import tw.edu.pu.csim.tcyang.maria2024.ui.theme.Maria2024Theme
 
 class MainActivity : ComponentActivity() {
@@ -37,8 +43,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             Maria2024Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val screenW = resources.displayMetrics.widthPixels
+                    val screenH = resources.displayMetrics.heightPixels
+                    //dp轉像素的倍率 (1dp的像素)
+                    val scale = resources.displayMetrics.density
+                    val game = Game(GlobalScope, screenW, screenH, scale)
+
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                    Exam(m = Modifier.padding(innerPadding))
+                    Exam(m = Modifier.padding(innerPadding), game)
+                    game.Play()
                 }
             }
         }
@@ -46,7 +59,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Exam(m:Modifier) {
+fun Exam(m:Modifier, game:Game) {
     val activity = (LocalContext.current as? Activity)
 
     var bkColor = arrayOf(
@@ -55,6 +68,8 @@ fun Exam(m:Modifier) {
     var offset1 by remember { mutableStateOf(Offset.Zero) }
     var offset2 by remember { mutableStateOf(Offset.Zero) }
     var Number by remember { mutableStateOf(0) }
+
+    val counter by game.state.collectAsState()
 
     Box(
         modifier = Modifier
@@ -91,7 +106,7 @@ fun Exam(m:Modifier) {
                 contentDescription = "A班合照",
             )
 
-            Text("遊戲持續時間 0 秒")
+            Text("遊戲持續時間 " + counter.toString() + " 秒")
             Text("您的成績 0 分")
 
             Button(onClick = {
@@ -99,5 +114,13 @@ fun Exam(m:Modifier) {
             }) { Text("結束App") }
         }
     }
+
+    Image(
+        painter = painterResource(id = R.drawable.maria2),
+        contentDescription = "瑪利亞位置圖示",
+        modifier = Modifier
+            .size(200.dp)
+            .offset { (IntOffset(game.icon.x,game.icon.y))}
+    )
 }
 
